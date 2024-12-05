@@ -1,0 +1,25 @@
+.fundo{
+    background-color: #ffffff;
+    color: blue;
+}
+.logo{
+    width: 100px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.bg-nav{
+    background-color: blue;
+}
+
+.br-hr{
+    background-color: blue;
+}
+.btn-login{
+    color: white;
+    margin-left: 10px;
+}
+
+.collapse-navbar-collapse{
+    margin-right: 10px;
+}
