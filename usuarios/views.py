@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from rolepermissions.decorators import has_permission_decorator
+from rolepermissions.roles import assign_role
 from .models import Users
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -13,12 +14,14 @@ def index(request):
     return render(request, 'index.html')
 
 def visualizar_artistas(request):
-    return render(request, 'visualizar_artistas.html', )
+    artistas = Users.objects.filter(cargo="A")
+    print(artistas)  # Adicione esta linha
+    return render(request, 'visualizar_artistas.html', {'artistas': artistas})
 
 @has_permission_decorator('cadastrar_artista')
 def cadastrar_artista(request):
     if request.method == "GET":
-        artistas = Users.objects.filter(cargo="V")
+        artistas = Users.objects.filter(cargo="A")
         return render(request, 'cadastrar_artista.html', {'artistas': artistas})
     if request.method == "POST":
         nome = request.POST.get('nome')
@@ -39,9 +42,10 @@ def cadastrar_artista(request):
                                         password=senha,
                                         first_name=nome,
                                         last_name=sobrenome,
-                                        cargo="V")
+                                        cargo="A")
         # TODO redirecionar com uma mensagem
-        return HttpResponse('Conta criada')
+        messages.add_message(request, messages.SUCCESS, 'Artista cadastrado com sucesso')
+        return redirect(reverse('cadastrar_artista'))
 
 def login(request):
     if request.method == "GET":
@@ -59,7 +63,7 @@ def login(request):
             return HttpResponse('Usuário inváido')
                 
         auth.login(request, user)
-        return HttpResponse('Usuario logado com sucesso')
+        return redirect(reverse('plataforma'))  # Redireciona para a página 'plataforma' após login bem-sucedido
 
 def logout(request):
     request.session.flush()
