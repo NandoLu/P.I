@@ -10,4 +10,3 @@ def define_permissoes(sender, instance, created, **kwargs):
             assign_role(instance, 'artista')
         elif instance.cargo == "D":
             assign_role(instance, 'administrador')
-

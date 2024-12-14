@@ -9,13 +9,30 @@
     integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
   <link rel="stylesheet" href="{% static 'usuarios/css/css.css' %}">
 
+  <style>
+    .profile-pic {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .navbar-brand {
+      margin-left: 7%;
+    }
+    .collapse {
+      margin-right: 8%;
+    }
+    .navbar { box-shadow: 0 5px 3px -2px rgb(202, 202, 202);
+    }
+
+  </style>
+
   {% block 'head' %}
 
   {% endblock %}
 
   <title> {% block 'title' %} {% endblock %}</title>
-</head>,
-
+</head>
 
 <body class="fundo">
 
@@ -27,8 +44,8 @@
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse-navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
         <li class="nav-item active">
           <a class="nav-link" href="{% url 'plataforma' %}">Início <span class="sr-only">(current)</span></a>
         </li>
@@ -36,16 +53,36 @@
           <a class="nav-link" href="{% url 'visualizar_artistas' %}">Artistas</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Personagens</a>
+          <a class="nav-link" href="{% url 'visualizar_personagens' %}">Personagens</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Sobre</a>
         </li>
-        <a class="btn-login" href="{% url 'login' %}">
-            <li class="btn btn-primary">
-            Entrar
-          </li>
-        </a>
+
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+        </li>
+        {% if user.cargo == 'D' %}
+        <li class="nav-link">
+          <a class="btn btn-primary" href="{% url 'cadastrar_artista' %}">Cadastrar Artista</a>
+        </li>
+        {% endif %}
+        {% if user.cargo == 'A' %}
+        <li class="nav-link">
+          <a class="btn btn-primary" href="{% url 'add_tirinha' %}">Tirinha</a>
+        </li>
+        {% endif %}
+        <li class="nav-link"> <a class="btn btn-danger" href="{% url 'sair' %}">Sair</a> </li>
+        {% if user.foto_perfil %}
+        <img src="{{ user.foto_perfil.url }}" class="profile-pic" alt="Foto de perfil">
+        {% else %}
+        <img src="{% static 'usuarios/img/user.jpg' %}" class="profile-pic" alt="Foto de perfil padrão">
+        {% endif %}
+        {% else %}
+        <li class="nav-link"> <a class="btn btn-primary" href="{% url 'login' %}">Entrar</a> </li>
+        <li class="nav-link"> <a class="btn btn-success" href="{% url 'cadastrar' %}">Cadastrar</a> </li>
+        {% endif %}
+        
       </ul>
     </div>
   </nav>

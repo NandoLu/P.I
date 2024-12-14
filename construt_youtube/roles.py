@@ -1,15 +1,18 @@
 from rolepermissions.roles import AbstractUserRole
 
-class Gerente(AbstractUserRole):
+class Administrador(AbstractUserRole):
     available_permissions = {
-        'cadastrar_produtos': True,
-        'liberar_descontos': True,
+        'cadastrar_tirinhas': True,
         'cadastrar_artista': True,
     }
 
 class Artista(AbstractUserRole):
     available_permissions = {
-        'realizar_venda': True,
+        'cadastrar_tirinhas': True,
     }   
     
-
+class Usuario(AbstractUserRole):
+    available_permissions = {
+        'fazer_comentario': True,
+        'fazer_curtida': True,
+    }   

@@ -6,7 +6,7 @@ urlpatterns = [
     path('cadastrar_artista/', views.cadastrar_artista, name="cadastrar_artista"), 
     path('visualizar_artistas/', views.visualizar_artistas, name="visualizar_artistas"), 
     path('login/', views.login, name="login"),
-    path('sair', views.logout, name="sair"),
+    path('sair/', views.logout, name="sair"),
+    path('cadastrar/', views.cadastrar, name="cadastrar"),
     path('excluir_usuario/<str:id>/', views.excluir_usuario, name="excluir_usuario" ),
 ]
-

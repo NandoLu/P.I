@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'usuarios',
     'rolepermissions',
-    'estoque',
+    'banco',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +68,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
         'libraries':{
-            'filters': 'estoque.templatetags.filters'
+            'filters': 'banco.templatetags.filters'
         }
         },
     },
@@ -151,3 +151,8 @@ MESSAGE_TAGS = {
     constants.INFO: 'alert-info',
     constants.WARNING: 'alert-warning'
 }
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'usuarios.backends.EmailBackend',  # Substitua 'seu_app' pelo nome do seu aplicativo
+]

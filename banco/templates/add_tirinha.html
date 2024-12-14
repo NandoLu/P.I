@@ -1,0 +1,54 @@
+{% extends 'base.html'%}
+{% load filters %}
+
+{% block 'body' %}
+<div class="container">
+    {% if messages %}
+      <br>
+      {% for message in messages%}
+        <div class="alert {{message.tags}}">{{message}}</div>
+      {% endfor %}
+    {% endif %}
+<form action="{% url 'add_tirinha' %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+    <br>
+    <label>Imagens: </label>
+    <input class="form-control" type="file" name="imagens" multiple accept="image/*">    
+    <br>
+    <br>
+    <label>Titulo: </label>
+    <input class="form-control" type="text" name="titulo">
+    <br>
+    <br>
+    <label>Selecione a personagem da tirinha: </label>
+    <select name="personagem">
+        {% for personagem in personagens %}
+        <option value="{{personagem.id}}">{{personagem.nome}}</option>
+        {% endfor %}
+    </select>
+    <br>
+    <br>
+    <input class="btn btn-success" type="submit" value="Enviar">
+
+</form>
+<hr style="background-color: gray;">
+<div class="listar_tirinhas">
+    <div class="row">
+        {% for tirinha in tirinhas %}
+        <div class="col-md-3">
+            <div style="background-color: #e0e0e0;" class="card mb-3">
+                <!-- {% if tirinha|get_first_image %}
+                <img width="100%" class="card-img-top" src="{{tirinha|get_first_image}}">
+                {% endif %} -->
+                <div class="card-body">
+                    <h5 class="card-title">{{tirinha.titulo}}</h5>
+                    <span class="badge badge-info">{{tirinha.personagem}}</span>
+                    <br> <br>
+                    <a href="#" class="btn btn-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</div>
+{% endblock %}
