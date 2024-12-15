@@ -1,30 +1,65 @@
 {% load static %}
 <!doctype html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
     integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
   <link rel="stylesheet" href="{% static 'usuarios/css/css.css' %}">
-
   <style>
     .profile-pic {
-      width: 50px;
-      height: 50px;
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
       object-fit: cover;
+      cursor: pointer;
+    }
+    .social-img{
+      border-radius: 50%;
+    }
+    .conf {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
     }
     .navbar-brand {
-      margin-left: 7%;
+      margin-left: 2%;
     }
     .collapse {
-      margin-right: 8%;
+      margin-right: 3%;
     }
-    .navbar { box-shadow: 0 5px 3px -2px rgb(202, 202, 202);
+    .navbar {
+      box-shadow: 0 5px 3px -2px rgb(202, 202, 202);
     }
-
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      margin-top: 10px;
+      left: 85%;
+      /* Ajuste a posição horizontal aqui */
+    }
+    .dropdown-menu.show {
+      display: block;
+    }
+    .footer {
+      background-color:transparent;
+      padding: 20px 0;
+      text-align: left;
+      position: fixed;
+      width: 5%;
+      bottom: 0;
+    }
+    .footer img {
+      width: 30px;
+      height: 30px;
+      margin: 20px;
+    }
   </style>
 
   {% block 'head' %}
@@ -33,9 +68,7 @@
 
   <title> {% block 'title' %} {% endblock %}</title>
 </head>
-
 <body class="fundo">
-
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="{% url 'plataforma' %}">
       <img class="logo" src="{% static 'usuarios/img/logo.png' %}">
@@ -58,37 +91,50 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Sobre</a>
         </li>
-
         {% if user.is_authenticated %}
         <li class="nav-item">
         </li>
         {% if user.cargo == 'D' %}
         <li class="nav-link">
-          <a class="btn btn-primary" href="{% url 'cadastrar_artista' %}">Cadastrar Artista</a>
+          <img src="{% static 'usuarios/img/conf.png' %}" class="conf" alt="Configurações"
+            onclick="toggleDropdown('dropdownMenuConf')">
+          <div class="dropdown-menu" id="dropdownMenuConf">
+            <a class="dropdown-item" href="{% url 'cadastrar_artista' %}"> ➕ Artista</a>
+            <a class="dropdown-item" href="{% url 'add_tirinha' %}"> ➕ Tirinha</a>
+            <a class="dropdown-item" href="{% url 'add_personagem' %}"> ➕ Personagem</a>
+          </div>
         </li>
         {% endif %}
         {% if user.cargo == 'A' %}
         <li class="nav-link">
-          <a class="btn btn-primary" href="{% url 'add_tirinha' %}">Tirinha</a>
+          <a class="btn btn-primary" href="{% url 'add_tirinha' %}"> Adicionar Tirinha</a>
         </li>
         {% endif %}
-        <li class="nav-link"> <a class="btn btn-danger" href="{% url 'sair' %}">Sair</a> </li>
-        {% if user.foto_perfil %}
-        <img src="{{ user.foto_perfil.url }}" class="profile-pic" alt="Foto de perfil">
-        {% else %}
-        <img src="{% static 'usuarios/img/user.jpg' %}" class="profile-pic" alt="Foto de perfil padrão">
-        {% endif %}
+        <li class="nav-link">
+          {% if user.foto_perfil %}
+          <img src="{{ user.foto_perfil.url }}" class="profile-pic" alt="Foto de perfil" onclick="toggleDropdown('dropdownMenuProfile')">
+          {% else %}
+          <img src="{% static 'usuarios/img/user.jpg' %}" class="profile-pic" alt="Foto de perfil" onclick="toggleDropdown('dropdownMenuProfile')">
+          {% endif %}
+          <div class="dropdown-menu" id="dropdownMenuProfile">
+            <a class="dropdown-item" href="{% url 'editar_perfil' %}">Editar Perfil</a>
+            <a class="dropdown-item" href="{% url 'sair' %}">Sair</a>
+          </div>
+        </li>
         {% else %}
         <li class="nav-link"> <a class="btn btn-primary" href="{% url 'login' %}">Entrar</a> </li>
         <li class="nav-link"> <a class="btn btn-success" href="{% url 'cadastrar' %}">Cadastrar</a> </li>
         {% endif %}
-        
       </ul>
     </div>
   </nav>
-
+<br>
   {% block 'body' %}
   {% endblock %}
+
+  <footer class="footer">
+    <a href="https://www.instagram.com/poesia_em_tirinhas/" target="_blank"><img class="social-img" src="{% static 'usuarios/img/img.jpg' %}" alt="Instagram"></a>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -96,7 +142,11 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
     crossorigin="anonymous"></script>
-
+  <script>
+    function toggleDropdown(menuId) {
+      var dropdownMenu = document.getElementById(menuId);
+      dropdownMenu.classList.toggle('show');
+    }
+  </script>
 </body>
-
 </html>

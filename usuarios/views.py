@@ -11,9 +11,12 @@ from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.db import IntegrityError
 # somente quem tem a permissao consegue acessar a view
+from banco.models import Tirinha, Imagem
 
 def index(request):
-    return render(request, 'index.html')
+    tirinhas = Tirinha.objects.all().order_by('-id')[:10]  # Busca as 10 tirinhas mais recentes
+    imagens = Imagem.objects.filter(tirinha__in=tirinhas)
+    return render(request, 'index.html', {'tirinhas': tirinhas, 'imagens': imagens})
 
 def visualizar_artistas(request):
     artistas = Users.objects.filter(cargo="A")
@@ -68,31 +71,31 @@ def login(request):
         return redirect(reverse('plataforma'))
 
 def cadastrar(request):
-    if request.method == "GET":
-        return render(request, 'cadastrar.html')
-    elif request.method == "POST":
+    if request.method == "POST":
         username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
         email = request.POST.get('email')
         password = request.POST.get('password')
-        cargo = "U"
         foto_perfil = request.FILES.get('foto_perfil')
-        if Users.objects.filter(username=username).exists(): 
-            messages.error(request, 'Este nome de usuário já está em uso. Por favor, escolha outro.') 
-            return redirect('cadastrar')
-        if Users.objects.filter(email=email).exists(): 
-            messages.error(request, 'Este e-mail de usuário já está em uso. Por favor, escolha outro.') 
-            return redirect('cadastrar')
-    try: 
-        user = Users.objects.create_user(username=username, email=email, password=password, cargo=cargo, foto_perfil=foto_perfil) 
-        user.save() 
-        # Especificar o backend ao fazer login do usuário 
-        auth_login(request, user, backend='seu_app.backends.EmailBackend')
-        messages.success(request, 'Usuário cadastrado com sucesso') 
-        return redirect('login') 
-    except IntegrityError: 
-        messages.error(request, 'Erro ao cadastrar usuário. Tente novamente.') 
-        return redirect('cadastrar')
 
+        # TODO: Fazer validações dos dados
+
+        user = Users.objects.filter(email=email)
+
+        if user.exists():
+            messages.error(request, 'Email já existe')
+            return redirect('cadastrar')
+
+        user = Users.objects.create_user(username=email, 
+                                         email=email,
+                                         password=password,
+                                         first_name=first_name,
+                                         last_name=last_name,
+                                         foto_perfil=foto_perfil)
+        messages.success(request, 'Usuário cadastrado com sucesso')
+        return redirect('login')
+    return render(request, 'cadastrar.html')
 
 def logout(request):
     request.session.flush()

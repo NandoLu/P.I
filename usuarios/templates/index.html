@@ -1,15 +1,109 @@
 {% extends 'base.html'%}
-{% load filters %}
+{% load static %}
 
 {% block 'body' %}
 <div class="container">
+    <style>
+        .tirinha-card {
+            overflow: hidden;
+            transition: transform 1s ease, filter 1s ease;
+        }
 
-<hr style="background-color: gray;">
-<div class="listar_produtos">
-    <div>
-        
+        .tirinha-card img {
+            transition: transform 1s ease, filter 1s ease;
+        }
+
+        .tirinha-card:hover img {
+            transform: scale(1.05);
+            filter: brightness(0.7);
+        }
+
+        .modal-content {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .modal-body .tirinha-img {
+            flex: 2;
+            padding-right: 20px;
+        }
+
+        .modal-body .tirinha-info {
+            flex: 1;
+        }
+
+        .comentarios {
+            max-height: 200px; /* Define a altura máxima da área de comentários */
+            overflow-y: auto; /* Adiciona rolagem vertical */
+        }
+    </style>
+    <h1 class="text-center my-4">Tirinhas Recentes</h1>
+    <div class="row">
+        {% for imagem in imagens %}
+        <div class="col-md-4 mb-4">
+            <div class="card tirinha-card" data-toggle="modal" data-target="#modal{{ imagem.id }}">
+                <img src="{{ imagem.imagem.url }}" class="card-img-top" alt="Tirinha"
+                    style="object-fit: cover; width: 100%; height: 300px;">
+                <div class="card-img-overlay d-flex align-items-end p-2">
+                    <p class="text-white bg-dark p-1" style="font-size: 0.8rem; margin: 0; border-radius: 15px;">{{imagem.tirinha.personagem.nome }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL -->
+        <div class="modal fade" id="modal{{ imagem.id }}" tabindex="-1" role="dialog"
+            aria-labelledby="modalLabel{{ imagem.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="tirinha-img">
+                            <img src="{{ imagem.imagem.url }}" class="img-fluid" alt="Tirinha"
+                                style="width: 100%; height: auto; object-fit: contain;">
+                        </div>
+                        <div class="tirinha-info">
+                            <h5 class="mt-2">{{ imagem.tirinha.titulo }}</h5>
+                            <p>Personagem: {{ imagem.tirinha.personagem.nome }}</p>
+                            <p>Artista: {{ imagem.tirinha.personagem.artista.get_full_name }}</p>
+                            <form action="{% url 'curtir_tirinha' imagem.tirinha.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-light">
+                                    <img src="{% static 'usuarios/img/heart_p.png' %}" alt="Curtir"
+                                        style="width: 20px; height: 20px;">
+                                    Curtir
+                                </button>
+                            </form>
+                            <p>{{ imagem.tirinha.curtida_set.count }} curtidas</p>
+                            <hr>
+                            <h6>Comentários</h6>
+                            <div class="comentarios">
+                                {% for comentario in imagem.tirinha.comentario_set.all %}
+                                <p><strong>{{ comentario.usuario.get_full_name }}:</strong> {{ comentario.texto }}</p>
+                                {% endfor %}
+                                <form action="{% url 'comentar_tirinha' imagem.tirinha.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <textarea name="texto" class="form-control" rows="2" placeholder="Adicione um comentário..."></textarea>
+                                    <button type="submit" class="btn btn-primary mt-2">Comentar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    <h1>Index ihul</h1>
 </div>
-</div>
+
+{% if request.GET.modal %}
+<script>
+    $(document).ready(function() {
+        $('#modal{{ request.GET.modal }}').modal('show');
+    });
+</script>
+{% endif %}
 {% endblock %}

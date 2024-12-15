@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block 'body' %}
 
@@ -9,6 +10,11 @@
       {% for artista in artistas %}
         <div class="col-md-4">
           <div class="card mb-4">
+            {% if artista.foto_perfil %}
+            <img src="{{ artista.foto_perfil.url }}" class="card-img-top" alt="Foto de {{ artista.first_name }}" style="width: 100%; height: 300px; object-fit: cover;">
+            {% else %}
+            <img src="{% static 'usuarios/img/user.jpg' %}" class="card-img-top" alt="Foto padrão" style="width: 100%; height: 300px; object-fit: cover;">
+            {% endif %}
             <div class="card-body">
               <h5 class="card-title">{{ artista.first_name }} {{ artista.last_name }}</h5>
               <a href="#" class="btn btn-primary">Acessar</a>

@@ -9,28 +9,19 @@
     {% endfor %}
     {% endif %}
     <form action="{% url 'cadastrar' %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+        <label>Foto de perfil: </label>
+        <input class="form-control" type="file" name="foto_perfil" accept="image/*">
         <br>
-        <label>Nome: </label>
-        <input class="form-control" type="text" name="first_name" required>
-        <br>
-        <br>
-        <label>Sobrenome: </label>
-        <input class="form-control" type="text" name="last_name" required>
-        <br>
+        <label>Nome de usuário: </label>
+        <input class="form-control" type="text" name="username" required>
         <br>
         <label>Email: </label>
         <input class="form-control" type="email" name="email" required>
         <br>
-        <br>
         <label>Senha: </label>
         <input class="form-control" type="password" name="password" required>
         <br>
-        <br>
-        <label>Foto de perfil: </label>
-        <input class="form-control" type="file" name="foto_perfil" accept="image/*">
-        <br>
-        <br>
-        <input class="btn btn-success" type="submit" value="Cadastrar">
+        <input class="btn btn-success" type="submit" value="Salvar">
     </form>
 </div>
 {% endblock %}

@@ -19,12 +19,21 @@
     <input class="form-control" type="text" name="titulo">
     <br>
     <br>
+    {% if user.cargo == 'D' %}
     <label>Selecione a personagem da tirinha: </label>
     <select name="personagem">
         {% for personagem in personagens %}
         <option value="{{personagem.id}}">{{personagem.nome}}</option>
         {% endfor %}
     </select>
+    {% elif user.cargo == 'A' %}
+    <label>Selecione o seu personagem: </label>
+    <select name="personagem">
+        {% for personagem in personagens %}
+        <option value="{{personagem.id}}">{{personagem.nome}}</option>
+        {% endfor %}
+    </select>
+    {% endif %}
     <br>
     <br>
     <input class="btn btn-success" type="submit" value="Enviar">
@@ -43,7 +52,8 @@
                     <h5 class="card-title">{{tirinha.titulo}}</h5>
                     <span class="badge badge-info">{{tirinha.personagem}}</span>
                     <br> <br>
-                    <a href="#" class="btn btn-primary">Acessar</a>
+                    <a href="{% url 'delete_tirinha' tirinha.id %}" class="btn btn-danger">Excluir</a>
+                    <a href="#" class="btn btn-secondary">Editar</a>
                 </div>
             </div>
         </div>

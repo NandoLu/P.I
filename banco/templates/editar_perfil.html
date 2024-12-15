@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'body' %}
+<div class="container d-flex justify-content-center">
+    <div class="card shadow p-4" style="width: 100%; max-width: 600px; border-radius: 15px;">
+        <h2 class="text-center mb-4">Editar Perfil</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group text-center">
+                {% if request.user.foto_perfil %}
+                <img src="{{ request.user.foto_perfil.url }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Foto de perfil">
+                {% else %}
+                <img src="{% static 'usuarios/img/user.jpg' %}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Foto de perfil">
+                {% endif %}
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Nome de Usuário:</label>
+                    <h5>{{ request.user.get_full_name }}</h5>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Email:</label>
+                    <h5>{{ request.user.email }}</h5>
+                </div>
+            </div>
+            <div class="form-group">
+                {{ perfil_form.foto_perfil.label_tag }}
+                {{ perfil_form.foto_perfil }}
+            </div>
+            <div class="form-group">
+                {{ senha_form.old_password.label_tag }}
+                {{ senha_form.old_password }}
+            </div>
+            <div class="form-group">
+                {{ senha_form.new_password1.label_tag }}
+                {{ senha_form.new_password1 }}
+            </div>
+            <div class="form-group">
+                {{ senha_form.new_password2.label_tag }}
+                {{ senha_form.new_password2 }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="border-radius: 25px;">Salvar Alterações</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
