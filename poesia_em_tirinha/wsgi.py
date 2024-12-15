@@ -1,5 +1,5 @@
 """
-WSGI config for poesia_em_tirinha project.
+WSGI config for construt_youtube project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'poesia_em_tirinha.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'construt_youtube.settings')
 
 application = get_wsgi_application()
