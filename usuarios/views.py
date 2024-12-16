@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from rolepermissions.decorators import has_permission_decorator
+from django.contrib.auth.decorators import login_required
 from rolepermissions.roles import assign_role
 from .models import Users
 from django.shortcuts import redirect
@@ -11,7 +12,11 @@ from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.db import IntegrityError
 # somente quem tem a permissao consegue acessar a view
-from banco.models import Tirinha, Imagem
+from banco.models import Tirinha, Imagem, Personagem
+from .forms import EditarFotoPerfilForm, AlterarSenhaForm
+from django.contrib.auth import update_session_auth_hash
+from django.http import JsonResponse
+# from .views import login
 
 def index(request):
     tirinhas = Tirinha.objects.all().order_by('-id')[:10]  # Busca as 10 tirinhas mais recentes
@@ -19,8 +24,7 @@ def index(request):
     return render(request, 'index.html', {'tirinhas': tirinhas, 'imagens': imagens})
 
 def visualizar_artistas(request):
-    artistas = Users.objects.filter(cargo="A")
-    print(artistas)  # Verifique se os artistas estão sendo recuperados
+    artistas = Users.objects.filter(cargo="A").prefetch_related('personagem_set')
     return render(request, 'visualizar_artistas.html', {'artistas': artistas})
 
 @has_permission_decorator('cadastrar_artista')
@@ -107,3 +111,51 @@ def excluir_usuario(request, id):
     artista.delete()
     messages.add_message(request, messages.SUCCESS, 'Artista excluido com sucesso')
     return redirect(reverse('cadastrar_artista'))
+
+
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import update_session_auth_hash
+from .forms import UserChangeForm, EditarFotoPerfilForm, AlterarSenhaForm
+
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import update_session_auth_hash
+from .forms import UserChangeForm, EditarFotoPerfilForm, AlterarSenhaForm
+
+@login_required
+def editar_perfil(request):
+    usuario_form = UserChangeForm(instance=request.user)
+    foto_form = EditarFotoPerfilForm(instance=request.user)
+    senha_form = AlterarSenhaForm(request.user)
+
+    if request.method == 'POST':
+        if 'salvar_usuario' in request.POST:
+            usuario_form = UserChangeForm(request.POST, instance=request.user)
+            if usuario_form.is_valid():
+                usuario_form.save()
+                messages.success(request, 'Seu nome de usuário e email foram atualizados com sucesso!')
+                return redirect('editar_perfil')
+        elif 'salvar_foto' in request.POST:
+            foto_form = EditarFotoPerfilForm(request.POST, request.FILES, instance=request.user)
+            if foto_form.is_valid():
+                foto_form.save()
+                messages.success(request, 'Sua foto de perfil foi atualizada com sucesso!')
+                return redirect('editar_perfil')
+        elif 'salvar_senha' in request.POST:
+            senha_form = AlterarSenhaForm(request.user, request.POST)
+            if senha_form.is_valid():
+                user = senha_form.save()
+                update_session_auth_hash(request, user)  # Atualiza a sessão com a nova senha
+                messages.success(request, 'Sua senha foi atualizada com sucesso!')
+                return redirect('editar_perfil')
+            else:
+                messages.error(request, 'Por favor, corrija os erros abaixo.')
+
+    return render(request, 'editar_perfil.html', {
+        'usuario_form': usuario_form,
+        'foto_form': foto_form,
+        'senha_form': senha_form
+    })

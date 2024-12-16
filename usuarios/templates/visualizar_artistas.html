@@ -4,6 +4,19 @@
 {% block 'body' %}
 
   <div class="container">
+    <style>
+      .personagem-tag {
+        background-color: #007bff; /* Cor de fundo branca */
+        color: #ffffff; /* Cor do texto preta */
+        font-size: 0.8rem; /* Tamanho da fonte */
+        border: 2px solid #61adff; /* Borda azul */
+        border-radius: 5px; /* Bordas arredondadas */
+        padding: 5px 10px; /* Espaçamento interno */
+        display: inline-block; /* Exibição em bloco inline */
+        margin-bottom: 5px; /* Margem inferior */
+      }
+    </style>
+    
     <h1>Artistas</h1>
     <hr class="br-hr">
     <div class="row">
@@ -17,7 +30,13 @@
             {% endif %}
             <div class="card-body">
               <h5 class="card-title">{{ artista.first_name }} {{ artista.last_name }}</h5>
-              <a href="#" class="btn btn-primary">Acessar</a>
+              <ul class="list-unstyled">
+                {% for personagem in artista.personagem_set.all %}
+                  <li>
+                    <p class="personagem-tag">{{ personagem.nome }}</p>
+                  </li>
+                {% endfor %}
+              </ul>
             </div>
           </div>
         </div>

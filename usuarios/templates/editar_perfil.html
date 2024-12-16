@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'body' %}
+<div class="container d-flex justify-content-center">
+    <div class="card shadow p-4" style="width: 100%; max-width: 600px; border-radius: 15px;">
+        <h2 class="text-center mb-4">Editar Perfil</h2>
+        
+         <!-- Formulário para atualizar foto de perfil -->
+         <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group text-center">
+                {% if request.user.foto_perfil %}
+                <img src="{{ request.user.foto_perfil.url }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Foto de perfil">
+                {% else %}
+                <img src="{% static 'usuarios/img/user.jpg' %}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Foto de perfil">
+                {% endif %}
+            </div>
+            {{ foto_form.as_p }}
+            <button type="submit" name="salvar_foto" class="btn btn-primary btn-block" style="border-radius: 25px;">Salvar</button>
+        </form>
+
+        <!-- Formulário para atualizar primeiro nome e sobrenome -->
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_first_name">Primeiro Nome:</label>
+                {{ usuario_form.first_name }}
+            </div>
+            <div class="form-group">
+                <label for="id_last_name">Sobrenome:</label>
+                {{ usuario_form.last_name }}
+            </div>
+            <button type="submit" name="salvar_usuario" class="btn btn-primary btn-block" style="border-radius: 25px;">Salvar</button>
+        </form>
+        
+        <!-- Formulário para atualizar senha -->
+        <form method="POST">
+            {% csrf_token %}
+            {{ senha_form.as_p }}
+            <button type="submit" name="salvar_senha" class="btn btn-primary btn-block" style="border-radius: 25px;">Salvar Senha</button>
+        </form>
+        
+        <!-- Exibir mensagens de erro -->
+        {% if usuario_form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field in usuario_form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        {% if foto_form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field in foto_form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        {% if senha_form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field in senha_form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

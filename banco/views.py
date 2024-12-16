@@ -11,10 +11,10 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import EditarPerfilForm, AlterarSenhaForm
-from django.contrib.auth import update_session_auth_hash
-from django.http import JsonResponse
-from usuarios.views import login
+# from .forms import EditarPerfilForm, AlterarSenhaForm
+# from django.contrib.auth import update_session_auth_hash
+# from django.http import JsonResponse
+# from usuarios.views import login
 
 def add_personagem(request): 
     if request.method == "GET": 
@@ -61,9 +61,9 @@ def add_tirinha(request):
 
             img = Image.open(f)
             img = img.convert('RGB')
-            img = img.resize((200, 200))
+            img = img.resize((600, 600))
             draw = ImageDraw.Draw(img)
-            draw.text((20, 180), f"poesia_em_tirinhas {date.today()}", (255, 255, 255))
+            draw.text((20, 580), f"poesia_em_tirinhas {date.today()}", (255, 255, 255))
             output = BytesIO()
             img.save(output, format="JPEG", quality=100)
             output.seek(0)
@@ -99,26 +99,34 @@ def visualizar_personagens(request):
     print(personagens)  # Verifique se os persoangens estão sendo recuperados
     return render(request, 'visualizar_personagens.html', {'personagens': personagens})
 
-@login_required
-def editar_perfil(request):
-    if request.method == 'POST':
-        perfil_form = EditarPerfilForm(request.POST, request.FILES, instance=request.user)
-        senha_form = AlterarSenhaForm(request.user, request.POST)
-        if perfil_form.is_valid():
-            perfil_form.save()
-            messages.success(request, 'Seu perfil foi atualizado com sucesso!')
-        if senha_form.is_valid():
-            user = senha_form.save()
-            update_session_auth_hash(request, user)  # Atualiza a sessão com a nova senha
-            messages.success(request, 'Sua senha foi atualizada com sucesso!')
-        return redirect('editar_perfil')
-    else:
-        perfil_form = EditarPerfilForm(instance=request.user)
-        senha_form = AlterarSenhaForm(request.user)
-    return render(request, 'editar_perfil.html', {
-        'perfil_form': perfil_form,
-        'senha_form': senha_form
-    })
+# @login_required
+# def editar_perfil(request):
+#     if request.method == 'POST':
+#         perfil_form = EditarPerfilForm(request.POST, request.FILES, instance=request.user)
+#         senha_form = AlterarSenhaForm(request.user, request.POST)
+#         if perfil_form.is_valid() and senha_form.is_valid():
+#             perfil_form.save()
+#             user = senha_form.save()
+#             update_session_auth_hash(request, user)  # Atualiza a sessão com a nova senha
+#             messages.success(request, 'Seu perfil e senha foram atualizados com sucesso!')
+#         elif perfil_form.is_valid():
+#             perfil_form.save()
+#             messages.success(request, 'Seu perfil foi atualizado com sucesso!')
+#         elif senha_form.is_valid():
+#             user = senha_form.save()
+#             update_session_auth_hash(request, user)  # Atualiza a sessão com a nova senha
+#             messages.success(request, 'Sua senha foi atualizada com sucesso!')
+#         else:
+#             messages.error(request, 'Por favor, corrija os erros abaixo.')
+#         return redirect('editar_perfil')
+#     else:
+#         perfil_form = EditarPerfilForm(instance=request.user)
+#         senha_form = AlterarSenhaForm(request.user)
+#     return render(request, 'editar_perfil.html', {
+#         'perfil_form': perfil_form,
+#         'senha_form': senha_form
+#     })
+
 
 def index(request):
     tirinhas = Tirinha.objects.all().order_by('-id')[:10]
